@@ -1,0 +1,5 @@
+results/simulated/*rds
+results/real/*rds
+nohup.out
+Rplots.pdf
+.Rhistory

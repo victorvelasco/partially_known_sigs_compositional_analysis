@@ -4,10 +4,6 @@ library(ggmcmc)
 
 set.seed(1)
 
-args = commandArgs(trailingOnly=TRUE)
-
-
-setwd("/home/victor/phd/comp_receptor_modelling/")
 source("script/alr_functions.R")
 
 # First, work out the prior mean for exposures, eta
@@ -41,20 +37,6 @@ for (i in 1:nrow(W)) {
 Walr <- alrTransformMatrix(W)
 eta <- colMeans(Walr)
 
-##### ### Plot prior weights
-##### SigmaW <- 10*(matrix(1, nrow = ncol(Walr), ncol = ncol(Walr)) + diag(ncol(Walr)))
-##### B <- 100000
-##### wStar <- rmvnorm(B, mean = eta, sigma = SigmaW)
-##### dim(wStar)
-##### wStar <- alrInvTransformMatrix(wStar)
-##### distances <- apply(wStar, 1, function(w) aitchisonDistance(w, alrInv(eta)))
-##### plot(density(distances), main = "Prior distance from the prior centre to the vector of weights")
-##### points(apply(W, 1, function(w) aitchisonDistance(w, alrInv(eta))), rep(0, nrow(W)))
-
-
-
-
-
 set.seed(1)
 # Read counts matrix (for colorectal patients)
 M <- read.csv("data/degasperi2022/counts_matrix.csv", header = TRUE, row.names = 1)
@@ -84,33 +66,33 @@ plots_posterior_weights <- list()
 plots_posterior_predictive <- list()
 for (patient_index in c(1:5, 7:10)) {
   
-  posterior_draws <- readRDS(paste0("results_dissertation/degasperi/fit_simulated", patient_index, ".rds"))
+  posterior_draws <- readRDS(paste0("results/real/fit_simulated", patient_index, ".rds"))
   posterior_draws <- rstan::extract(posterior_draws)
-  signatures_plots <- plot_signature_posterior(posterior_draws, as.matrix(S))
-  for (sig in nrow(S):1) {
-    path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", patient_index, "/", rownames(S)[sig], ".png")
-    png(path, width = 2000, height = 1000)
-    ggsave(path, signatures_plots[[sig]])
-    dev.off()
-  }
+  ## signatures_plots <- plot_signature_posterior(posterior_draws, as.matrix(S))
+  ## for (sig in nrow(S):1) {
+  ##   path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", patient_index, "/", rownames(S)[sig], ".png")
+  ##   png(path, width = 2000, height = 1000)
+  ##   ggsave(path, signatures_plots[[sig]])
+  ##   dev.off()
+  ## }
   
-  ## plots_posterior_weights[[patient_index]] <- plot_exposure_posterior(posterior_draws, paste("Patient", patient_index), colnames(Eprior))
-  ## 
-  ## plots_posterior_predictive[[patient_index]] <- plot_catalogue_predictive(posterior_draws, paste("Patient", patient_index), M[patient_index, ])
+  plots_posterior_weights[[patient_index]] <- plot_exposure_posterior(posterior_draws, paste("Patient", patient_index), colnames(Eprior))
+  
+  plots_posterior_predictive[[patient_index]] <- plot_catalogue_predictive(posterior_draws, paste("Patient", patient_index), M[patient_index, ])
 }
 
-library(gridExtra)
-path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "exposures", ".png")
-png(path, width = 2000, height = 2500)
-ggsave(path, grid.arrange(grobs = plots_posterior_weights[c(1:5,7:10)], ncol = 2))
-dev.off()
-
-path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "predictive1", ".png")
-png(path, width = 2000, height = 2500)
-ggsave(path, grid.arrange(grobs = plots_posterior_predictive[1:5], ncol = 1))
-dev.off()
-path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "predictive2", ".png")
-png(path, width = 2000, height = 2000)
-ggsave(path, grid.arrange(grobs = plots_posterior_predictive[7:10], ncol = 1))
-dev.off()
+## library(gridExtra)
+## path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "exposures", ".png")
+## png(path, width = 2000, height = 2500)
+## ggsave(path, grid.arrange(grobs = plots_posterior_weights[c(1:5,7:10)], ncol = 2))
+## dev.off()
+## 
+## path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "predictive1", ".png")
+## png(path, width = 2000, height = 2500)
+## ggsave(path, grid.arrange(grobs = plots_posterior_predictive[1:5], ncol = 1))
+## dev.off()
+## path <- paste0("/home/victor/phd/dissertation/images/ch4/degasperi/", "predictive2", ".png")
+## png(path, width = 2000, height = 2000)
+## ggsave(path, grid.arrange(grobs = plots_posterior_predictive[7:10], ncol = 1))
+## dev.off()
 
