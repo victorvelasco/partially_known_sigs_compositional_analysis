@@ -1,0 +1,5 @@
+Data retrieved from https://dcc.icgc.org/releases/PCAWG
+
+The file sigProfiler_SBS_signatures_2019_05_22.csv contains the SBS signature matrix for whole-genomes estimated with SigProfiler from PCAWG data.
+
+The file PCAWG_sigProfiler_DBS_signatures_in_samples.csv contains the estimated exposures in PCAWG genomes.
